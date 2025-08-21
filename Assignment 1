@@ -10,7 +10,7 @@ void main() {
   int scienceScore = 80;
   int scienceCredits = 2;
 
-  // Function to convert score to grade point (simple scale)
+  // Function to convert score to grade point 
   double getGradePoint(int score) {
     if (score >= 70) return 4.0;  // A
     if (score >= 60) return 3.0;  // B

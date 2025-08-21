@@ -1,2 +1,37 @@
 # Mobile-Application-
-Assignments 
+Assignments 1
+void main() {
+  
+  // Scores and credit hours
+  int mathsScore = 70;
+  int mathsCredits = 2;
+
+  int englishScore = 65;
+  int englishCredits = 3;
+
+  int scienceScore = 80;
+  int scienceCredits = 2;
+
+  // Function to convert score to grade point (simple scale)
+  double getGradePoint(int score) {
+    if (score >= 70) return 4.0;  // A
+    if (score >= 60) return 3.0;  // B
+    if (score >= 50) return 2.0;  // C
+    if (score >= 45) return 1.0;  // D
+    return 0.0; // F
+  }
+
+  // Calculate grade points
+  double mathsGP = getGradePoint(mathsScore) * mathsCredits;
+  double englishGP = getGradePoint(englishScore) * englishCredits;
+  double scienceGP = getGradePoint(scienceScore) * scienceCredits;
+
+  // Total grade points and credits
+  double totalGP = mathsGP + englishGP + scienceGP;
+  int totalCredits = mathsCredits + englishCredits + scienceCredits;
+
+  // GPA calculation
+  double gpa = totalGP / totalCredits;
+
+  print("Clinton's GPA is: ${gpa.toStringAsFixed(2)}");
+}

@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const StudentInfoApp());
+}
+
+class StudentInfoApp extends StatelessWidget {
+  const StudentInfoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Student Information Manager',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const StudentHomePage(),
+    );
+  }
+}
+
+class StudentHomePage extends StatefulWidget {
+  const StudentHomePage({super.key});
+
+  @override
+  State<StudentHomePage> createState() => _StudentHomePageState();
+}
+
+class _StudentHomePageState extends State<StudentHomePage> {
+  int studentCount = 0; // for counter
+  final _formKey = GlobalKey<FormState>();
+  String email = "";
+  String password = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Student Info Manager"),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Welcome Dashboard
+            const Text(
+              "Name: Jeffery Nana Ofosuhene (UEB3223222)\n"
+              "School: University of Energy and Natural Resources\n"
+              "Course: Mobile Application Development",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+
+            // Interactive Notification
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Hello Jeffery! Welcome to the Student Info Manager."),
+                  ),
+                );
+              },
+              child: const Text("Show Alert"),
+            ),
+            const SizedBox(height: 20),
+
+            // Student Counter
+            Text(
+              "Enrolled Students: $studentCount",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      if (studentCount > 0) studentCount--;
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add, color: Colors.green),
+                  onPressed: () {
+                    setState(() {
+                      studentCount++;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Student Login Form
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: "Email"),
+                    onChanged: (value) => email = value,
+                    validator: (value) {
+                      if (value == null || !value.contains("@")) {
+                        return "Enter a valid email!";
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: "Password"),
+                    obscureText: true,
+                    onChanged: (value) => password = value,
+                    validator: (value) {
+                      if (value == null || value.length < 6) {
+                        return "Password must be at least 6 characters!";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Login Successful!")),
+                        );
+                      }
+                    },
+                    child: const Text("Login"),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            //  Profile Picture Display
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                "https://picsum.photos/200",
+                width: 150,
+                height: 150,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

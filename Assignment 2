@@ -1,0 +1,42 @@
+import 'dart:io';
+
+void main() {
+  print("Enter student's name:");
+  String? name = stdin.readLineSync();
+
+  // Input scores
+  print("Enter Continuous Assessment score (out of 30):");
+  double ca = double.parse(stdin.readLineSync()!);
+
+  print("Enter Project Work score (out of 20):");
+  double project = double.parse(stdin.readLineSync()!);
+
+  print("Enter Exam score (out of 50):");
+  double exam = double.parse(stdin.readLineSync()!);
+
+  // Total Score
+  double total = ca + project + exam;
+
+  // Determine Grade
+  String grade;
+  if (total >= 70) {
+    grade = "A";
+  } else if (total >= 60) {
+    grade = "B";
+  } else if (total >= 50) {
+    grade = "C";
+  } else if (total >= 45) {
+    grade = "D";
+  } else {
+    grade = "F";
+  }
+
+  // Output Result
+  print("\n----- Student Result -----");
+  print("Name: $name");
+  print("CA: $ca");
+  print("Project: $project");
+  print("Exam: $exam");
+  print("Total Score: $total");
+  print("Grade: $grade");
+}

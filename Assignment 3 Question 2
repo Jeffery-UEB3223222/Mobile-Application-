@@ -1,0 +1,206 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const CourseDashboardApp());
+}
+
+class CourseDashboardApp extends StatelessWidget {
+  const CourseDashboardApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Course Dashboard',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.indigo),
+      home: const DashboardScreen(),
+    );
+  }
+}
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  int _currentIndex = 0;
+  double _enrollScale = 1.0;
+  String _selectedCategory = 'Technology';
+
+  final List<_Course> _courses = [
+    _Course('Project Management in I.T', 'Dr. K. Adu', Icons.assignment),
+    _Course('Information Security', 'Mr. Mensah', Icons.shield),
+    _Course('Python', 'Mr. Ayitey', Icons.code),
+    _Course('Advanced Networking', 'Mr. Andy', Icons.router),
+    _Course('Mobile Application Development', 'Mr. Emmanuel', Icons.phone_android),
+    _Course('Research Methods', 'Prof. Appiahene', Icons.menu_book),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final pages = <Widget>[
+      _buildHomeTab(),
+      _buildCoursesTab(),
+      _buildProfileTab(),
+    ];
+
+    final tabTitles = ['Home', 'Courses', 'Profile'];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Course Dashboard • ${tabTitles[_currentIndex]}'),
+        centerTitle: true,
+      ),
+      body: pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (i) => setState(() => _currentIndex = i),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Courses'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+
+  // Home Tab with Animated Button
+  Widget _buildHomeTab() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Welcome to your Course Dashboard',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 24),
+          GestureDetector(
+            onTapDown: (_) => setState(() => _enrollScale = 1.15),
+            onTapUp: (_) => setState(() => _enrollScale = 1.0),
+            onTapCancel: () => setState(() => _enrollScale = 1.0),
+            child: AnimatedScale(
+              scale: _enrollScale,
+              duration: const Duration(milliseconds: 180),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Enrollment started!')),
+                  );
+                },
+                icon: const Icon(Icons.school),
+                label: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+                  child: Text('Enroll in a Course'),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //  Courses Tab with ListView + Dropdown
+  Widget _buildCoursesTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Text("Category: ",
+                  style: TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(width: 12),
+              DropdownButton<String>(
+                value: _selectedCategory,
+                items: _categories
+                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                    .toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    setState(() => _selectedCategory = val);
+                  }
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Selected Category: $_selectedCategory",
+              style: const TextStyle(fontStyle: FontStyle.italic),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: ListView.separated(
+              itemCount: _courses.length,
+              separatorBuilder: (_, __) => const Divider(),
+              itemBuilder: (context, index) {
+                final c = _courses[index];
+                return ListTile(
+                  leading: CircleAvatar(child: Icon(c.icon)),
+                  title: Text(c.name),
+                  subtitle: Text("Instructor: ${c.instructor}"),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Selected: ${c.name}')),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Profile Tab with Logout Confirmation
+  Widget _buildProfileTab() {
+    return Center(
+      child: ElevatedButton.icon(
+        icon: const Icon(Icons.logout),
+        label: const Text('Logout'),
+        onPressed: () async {
+          final shouldExit = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Confirm Exit"),
+              content: const Text("Are you sure you want to exit the app?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text("No"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text("Yes"),
+                ),
+              ],
+            ),
+          );
+          if (shouldExit == true && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Exiting...")),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class _Course {
+  final String name;
+  final String instructor;
+  final IconData icon;
+
+  const _Course(this.name, this.instructor, this.icon);
+}
